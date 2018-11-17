@@ -7,7 +7,7 @@ const parseCode = (codeToParse) => {
     return parser(func);
 };
 
-
+var elseif=0;
 
 const objectLine= (line,type,name,condition,val)=>
 {
@@ -83,14 +83,47 @@ const whilExp= (ast)=>{
 const ifExp= (ast)=> {
 
     const test = escodegen.generate(ast.test);
-    const tmp= objectLine (ast.loc.start.line,ast.type, '',test,'');
-    const ezer= ast.alternate? parser(ast.alternate) : '';
+    let all ;
+    let tmp;
+    let ezer;
+    if(elseif==0)
+    {
+        tmp= objectLine (ast.loc.start.line,ast.type, '',test,'');
+    }
+    else{
+        tmp= objectLine (ast.loc.start.line,'else if statement', '',test,'');
+    }
+    //let ezer= ast.alternate ? parser(ast.alternate) : '';
+    if(ast.alternate ===null)
+    {
+        elseif=0;
+        ezer='';
+    }
+    else {
+        elseif=1;
+        ezer=  parser(ast.alternate);
+        elseif=0;
+    }
+
+    //ast.consequent.reduce((acc, curr) => acc.concat(parser(curr)), []);
 
 
-    //const all = ast.consequent.reduce((acc,curr) => acc.concat(parser(curr)),[]);
-    const all = parser(ast.consequent.body);
+    if(ast.consequent.body===undefined) {
+
+        all = parser(ast.consequent);
+
+    }
+
+    else {
+
+        all = ast.consequent.body.reduce((acc, curr) => acc.concat(parser(curr)), []);
+
+    }
+
+    //  const all = parser(ast.consequent);
+
     if(ezer==='') {
-        console.log('etayyyyyyy');
+
         return [tmp].concat(all);
     }
     else

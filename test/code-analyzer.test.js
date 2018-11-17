@@ -3,14 +3,14 @@ import {parseCode} from '../src/js/code-analyzer';
 
 describe('The javascript parser', () => {
 
-    it('is parsing an empty function correctly', () => {
+    it('test 1 -clean', () => {
         assert.deepEqual(
             (parseCode('')),
             []
         );
     });
 
-    it('is parsing a simple variable declaration correctly', () => {
+    it('test 2- let', () => {
         assert.deepEqual(
             (parseCode('let a;' + '\n' +
                 'a=9')),
@@ -32,7 +32,7 @@ describe('The javascript parser', () => {
             ]     );
     });
 
-    it('is parsing a simple variable declaration correctly', () => {
+    it('test 3 -let', () => {
         assert.deepEqual(
             parseCode('let a=9;'),
             [
@@ -47,7 +47,7 @@ describe('The javascript parser', () => {
         );
     });
 
-    it('is parsing a simple variable declaration correctly', () => {
+    it('test4 - let', () => {
         assert.deepEqual(
             parseCode('let a=9;'),
             [
@@ -63,7 +63,7 @@ describe('The javascript parser', () => {
     });
 
 
-    it('test', () => {
+    it('test 5 - while', () => {
         assert.deepEqual(
             parseCode('function test1(x){\n' +
         '    let tmp=1;\n' +
@@ -120,7 +120,7 @@ describe('The javascript parser', () => {
     });
 
 
-    it('test 2', () => {
+    it('test 6- for', () => {
         assert.deepEqual(
             parseCode('let x=8;\n' +
                 'let y=1;\n' +
@@ -167,7 +167,7 @@ describe('The javascript parser', () => {
             ]
         );
     });
-    it('is parsing a simple variable declaration correctly', () => {
+    it('test7 - for', () => {
         assert.deepEqual(
             parseCode('let x=0;\n' +
                 'for(let i =0;i<5;i++) {\n' +
@@ -199,7 +199,7 @@ describe('The javascript parser', () => {
             ]
         );
     });
-    it('is parsing a simple variable declaration correctly', () => {
+    it('test8- all', () => {
         assert.deepEqual(
             parseCode('function binarySearch(X, V, n){\n' +
                 '    let low, high, mid;\n' +
@@ -309,7 +309,7 @@ describe('The javascript parser', () => {
                 },
                 {
                     'Line': 9,
-                    'Type': 'IfStatement',
+                    'Type': 'else if statement',
                     'Name': '',
                     'Condition': 'X > V[mid]',
                     'Val': ''
