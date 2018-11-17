@@ -46,6 +46,7 @@ describe('The javascript parser', () => {
             ]
         );
     });
+
     it('is parsing a simple variable declaration correctly', () => {
         assert.deepEqual(
             parseCode('let a=9;'),
@@ -56,6 +57,144 @@ describe('The javascript parser', () => {
                     'Name': 'a',
                     'Condition': '',
                     'Val': 9
+                }
+            ]
+        );
+    });
+
+
+    it('test', () => {
+        assert.deepEqual(
+            parseCode('function test1(x){\n' +
+        '    let tmp=1;\n' +
+        '    while (tmp<4) {\n' +
+        '        tmp=tmp+1;\n' +
+        '    }\n' +
+        '    return tmp;\n' +
+        '}') ,
+            [
+                {
+                    'Line': 1,
+                    'Type': 'FunctionDeclaration',
+                    'Name': 'test1',
+                    'Condition': '',
+                    'Val': ''
+                },
+                {
+                    'Line': 1,
+                    'Type': 'variable declaration',
+                    'Name': 'x',
+                    'Condition': '',
+                    'Val': ''
+                },
+                {
+                    'Line': 2,
+                    'Type': 'VariableDeclaration',
+                    'Name': 'tmp',
+                    'Condition': '',
+                    'Val': 1
+                },
+                {
+                    'Line': 3,
+                    'Type': 'WhileStatement',
+                    'Name': '',
+                    'Condition': 'tmp < 4',
+                    'Val': ''
+                },
+                {
+                    'Line': 4,
+                    'Type': 'AssignmentExpression',
+                    'Name': 'tmp',
+                    'Condition': '',
+                    'Val': 'tmp + 1'
+                },
+                {
+                    'Line': 6,
+                    'Type': 'ReturnStatement',
+                    'Name': '',
+                    'Condition': '',
+                    'Val': 'tmp'
+                }
+            ]
+        );
+    });
+
+
+    it('test 2', () => {
+        assert.deepEqual(
+            parseCode('let x=8;\n' +
+                'let y=1;\n' +
+                'for(let i =0;i<5;i++) {\n' +
+                '    y = y + 1;\n' +
+                '    x = x - x;\n' +
+                '   }'),
+            [
+                {
+                    'Line': 1,
+                    'Type': 'VariableDeclaration',
+                    'Name': 'x',
+                    'Condition': '',
+                    'Val': 8
+                },
+                {
+                    'Line': 2,
+                    'Type': 'VariableDeclaration',
+                    'Name': 'y',
+                    'Condition': '',
+                    'Val': 1
+                },
+                {
+                    'Line': 3,
+                    'Type': 'ForStatement',
+                    'Name': '',
+                    'Condition': 'i < 5',
+                    'Val': ''
+                },
+                {
+                    'Line': 4,
+                    'Type': 'AssignmentExpression',
+                    'Name': 'y',
+                    'Condition': '',
+                    'Val': 'y + 1'
+                },
+                {
+                    'Line': 5,
+                    'Type': 'AssignmentExpression',
+                    'Name': 'x',
+                    'Condition': '',
+                    'Val': 'x - x'
+                }
+            ]
+        );
+    });
+    it('is parsing a simple variable declaration correctly', () => {
+        assert.deepEqual(
+            parseCode('let x=0;\n' +
+                'for(let i =0;i<5;i++) {\n' +
+                '    x = x + 1;\n' +
+                '   }\n' +
+                '\n'),
+            [
+                {
+                    'Line': 1,
+                    'Type': 'VariableDeclaration',
+                    'Name': 'x',
+                    'Condition': '',
+                    'Val': 0
+                },
+                {
+                    'Line': 2,
+                    'Type': 'ForStatement',
+                    'Name': '',
+                    'Condition': 'i < 5',
+                    'Val': ''
+                },
+                {
+                    'Line': 3,
+                    'Type': 'AssignmentExpression',
+                    'Name': 'x',
+                    'Condition': '',
+                    'Val': 'x + 1'
                 }
             ]
         );
