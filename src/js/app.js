@@ -6,21 +6,24 @@ $(document).ready(function () {
         let codeToParse = $('#codePlaceholder').val();
         let parsedCode = parseCode(codeToParse);
         $('#parsedCode').val(JSON.stringify(parsedCode, null, 2));
-        let str = '<table border="1">' +
+        let str = '<table>' +
             '<th>Line</th>' +
             '<th>Type</th>' +
             '<th>Name</th>' +
             '<th>Condition</th>' +
             '<th>Value</th>';
-        str=str+makeStr(str,parsedCode);
+        str=makeStr(str,parsedCode);
         str+='</table>';
         $('#exps').html(str);
     });
 });
 
 
+
+
 const makeStr = (str,parsedCode)=>
 {
+
     for (let i = 0 ; i < parsedCode.length ; i++)
     {
         let line= parsedCode[i].Line;
@@ -36,7 +39,6 @@ const makeStr = (str,parsedCode)=>
             '<td>' + val + '</td>' +
             '</tr>';
     }
+    return str;
 };
-
-
 
