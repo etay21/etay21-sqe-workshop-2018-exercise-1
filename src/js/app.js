@@ -18,6 +18,7 @@ $(document).ready(function () {
     });
 });
 
+
 const makeStr = (str,parsedCode)=>
 {
     for (let i = 0 ; i < parsedCode.length ; i++)
