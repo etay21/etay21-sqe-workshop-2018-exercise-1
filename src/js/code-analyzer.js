@@ -3,7 +3,6 @@ import * as escodegen from 'escodegen';
 
 const parseCode = (codeToParse) => {
     const func = esprima.parseScript(codeToParse,{loc: true});
-    console.log(func);
     return parser(func);
 };
 
@@ -14,9 +13,35 @@ const objectLine= (line,type,name,condition,val)=>
     return { Line:line, Type:type, Name:name, Condition:condition, Val:val};
 };
 
+
 const parser= (ast)=> {
+    let check = ast.type;
+    if(check==='Program')
+        return programParser(ast);
+    else if(check==='FunctionDeclaration')
+        return FunctionDcl(ast);
+    else if(check==='VariableDeclaration')
+        return varDecl(ast);
+    else if(check==='ExpressionStatement')
+        return  assDecl(ast);
+    else
+        return parser2(ast);
 
-
+};
+const parser2= (ast)=> {
+    let check = ast.type;
+    if (check === 'WhileStatement')
+        return whilExp(ast);
+    else if (check === 'IfStatement')
+        return ifExp(ast);
+    else if (check === 'ReturnStatement')
+        return returnExp(ast);
+    else if (check === 'ForStatement')
+        return forExp(ast);
+    return;
+};
+/*
+const parser= (ast)=> {
     switch (ast.type) {
     case 'Program':
         return programParser(ast);
@@ -33,13 +58,9 @@ const parser= (ast)=> {
     case 'ReturnStatement':
         return  returnExp(ast);
     case 'ForStatement':
-        return  forExp(ast);
+        return  forExp(ast);}};
 
-    }
-
-
-};
-
+*/
 const programParser= (ast)=>
 {
     //const obj= objectLine(ast.loc.start.line, ast.type, '', '','');
@@ -79,63 +100,49 @@ const whilExp= (ast)=>{
     return [tmp].concat(all);
 
 };
-const ifExp= (ast)=> {
+const findTmp=(ast,test)=>
+{
+    if (elseif == 0) {
+        return  objectLine(ast.loc.start.line, ast.type, '', test, '');
+    }
+    else {
+        return objectLine(ast.loc.start.line, 'else if statement', '', test, '');
+    }
+};
 
+const findAlt=(ast)=>
+{
+    if (ast.alternate === null) {
+        elseif = 0;
+        let ezer = '';
+        return ezer;
+    }
+    else {
+
+        elseif = 1;
+        let ezer = parser(ast.alternate);
+        elseif = 0;
+        return ezer;
+    }
+};
+const ifExp= (ast)=> {
     const test = escodegen.generate(ast.test);
     let all;
-    let tmp;
-    let ezer;
-    debugger;
-    console.log("etayyyyyy");
-    if (elseif == 0) {
-        console.log('1');
-        tmp = objectLine(ast.loc.start.line, ast.type, '', test, '');
-    }
-    else {
-        console.log('2');
-        tmp = objectLine(ast.loc.start.line, 'else if statement', '', test, '');
-    }
+    let tmp=findTmp(ast,test);
+    let ezer = findAlt(ast);
     //let ezer= ast.alternate ? parser(ast.alternate) : '';
-    if (ast.alternate === null) {
-        console.log('3');
-        elseif = 0;
-        ezer = '';
-    }
-    else {
-        console.log('4');
-        elseif = 1;
-        ezer = parser(ast.alternate);
-        elseif = 0;
-    }
-
     //ast.consequent.reduce((acc, curr) => acc.concat(parser(curr)), []);
-
-
     if (ast.consequent.body === undefined) {
-        console.log('5');
         all = parser(ast.consequent);
-
     }
-
-    else {
-        console.log('6');
-
+    else
         all = ast.consequent.body.reduce((acc, curr) => acc.concat(parser(curr)), []);
-
-    }
-
-    //  const all = parser(ast.consequent);
-
     if (ezer === '') {
-        console.log('7');
         return [tmp].concat(all);
     }
     else {
-        console.log('8');
-
         return [tmp].concat(all).concat(ezer);
     }
-
 };
 const returnExp= (ast)=> {
     const test = objectLine (ast.loc.start.line,ast.type, '','', escodegen.generate(ast.argument));
@@ -149,6 +156,5 @@ const forExp= (ast)=>{
     return [tmp].concat(all);
 
 };
-
 
 export {parseCode};
