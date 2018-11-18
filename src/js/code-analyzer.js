@@ -35,7 +35,6 @@ const parser= (ast)=> {
     case 'ForStatement':
         return  forExp(ast);
 
-
     }
 
 
@@ -83,38 +82,43 @@ const whilExp= (ast)=>{
 const ifExp= (ast)=> {
 
     const test = escodegen.generate(ast.test);
-    let all ;
+    let all;
     let tmp;
     let ezer;
-    if(elseif==0)
-    {
-        tmp= objectLine (ast.loc.start.line,ast.type, '',test,'');
-    }
-    else{
-        tmp= objectLine (ast.loc.start.line,'else if statement', '',test,'');
-    }
-    //let ezer= ast.alternate ? parser(ast.alternate) : '';
-    if(ast.alternate ===null)
-    {
-        elseif=0;
-        ezer='';
+    debugger;
+    console.log("etayyyyyy");
+    if (elseif == 0) {
+        console.log('1');
+        tmp = objectLine(ast.loc.start.line, ast.type, '', test, '');
     }
     else {
-        elseif=1;
-        ezer=  parser(ast.alternate);
-        elseif=0;
+        console.log('2');
+        tmp = objectLine(ast.loc.start.line, 'else if statement', '', test, '');
+    }
+    //let ezer= ast.alternate ? parser(ast.alternate) : '';
+    if (ast.alternate === null) {
+        console.log('3');
+        elseif = 0;
+        ezer = '';
+    }
+    else {
+        console.log('4');
+        elseif = 1;
+        ezer = parser(ast.alternate);
+        elseif = 0;
     }
 
     //ast.consequent.reduce((acc, curr) => acc.concat(parser(curr)), []);
 
 
-    if(ast.consequent.body===undefined) {
-
+    if (ast.consequent.body === undefined) {
+        console.log('5');
         all = parser(ast.consequent);
 
     }
 
     else {
+        console.log('6');
 
         all = ast.consequent.body.reduce((acc, curr) => acc.concat(parser(curr)), []);
 
@@ -122,12 +126,15 @@ const ifExp= (ast)=> {
 
     //  const all = parser(ast.consequent);
 
-    if(ezer==='') {
-
+    if (ezer === '') {
+        console.log('7');
         return [tmp].concat(all);
     }
-    else
+    else {
+        console.log('8');
+
         return [tmp].concat(all).concat(ezer);
+    }
 
 };
 const returnExp= (ast)=> {
