@@ -10,6 +10,7 @@ describe('The javascript parser', () => {
         );
     });
 
+
     it('test 2- let simple', () => {
         assert.deepEqual(
             (parseCode('let a;' + '\n' +
