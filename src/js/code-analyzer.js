@@ -78,14 +78,14 @@ const FunctionDcl= (ast)=>
 const varDecl= (ast)=>
 {
 
-    return ast.declarations.reduce((acc,curr) => acc.concat(objectLine(curr.loc.start.line, ast.type, curr.id.name,'',curr.init ? curr.init.value : '')),[]);
+    return ast.declarations.reduce((acc,curr) => acc.concat(objectLine(curr.loc.start.line, ast.type, curr.id.name,'',curr.init ? escodegen.generate(curr.init) : '')),[]);
 
 };
 
 const assDecl= (ast)=>
 {
 
-    return  objectLine(ast.expression.loc.start.line, ast.expression.type, ast.expression.left.name, '',escodegen.generate(ast.expression.right));
+    return  objectLine(ast.expression.loc.start.line, ast.expression.type, escodegen.generate(ast.expression.left), '',escodegen.generate(ast.expression.right));
 
 };
 
