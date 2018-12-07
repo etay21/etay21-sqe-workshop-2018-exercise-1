@@ -2,8 +2,8 @@ import * as esprima from 'esprima';
 import * as escodegen from 'escodegen';
 
 const parseCode = (codeToParse,params) => {
-    const func = esprima.parseScript(codeToParse,{loc: true});
-    let env= {};
+    var func = esprima.parseScript(codeToParse,{loc: true});
+    var env= {};
 
     return parser(func,params,env);
 };
@@ -40,9 +40,11 @@ const parser2= (ast,params,env)=> {
            return blockStament(ast,params,env);
     }
 };
+
+
 const blockStament(ast,params,env) =>
 {
-
+var bodyN = ast.body.map((rib) => parseCode((rib,params,env)) )
 };
 
 const programParser= (ast,params,env)=>
@@ -72,7 +74,7 @@ const varDecl= (ast,params,env)=>
                                         env[dec.id.name] =null;
                                     }
                                     else {
-                                        env[dec.id.name] =escodegen.generate(sub(env,value));
+                                        env[dec.id.name] =escodegen.generate(sub(value,params,env));
                                     }}
     )
     return ast;
@@ -81,7 +83,7 @@ const varDecl= (ast,params,env)=>
 
 const assDecl= (ast,params,env)=>
 {
-    env[ast.left.name] = escodegen.generate(sub(env,ast.right));
+    env[ast.left.name] = escodegen.generate(sub(ast.right,params,env));
     return ast;
    /// return  objectLine(ast.expression.loc.start.line, ast.expression.type, escodegen.generate(ast.expression.left), '',escodegen.generate(ast.expression.right));
 
@@ -90,33 +92,11 @@ const assDecl= (ast,params,env)=>
 
 
 const ifExp= (ast,params,env)=> {
-    const test = escodegen.generate(ast.test);
-    let all;
-    let tmp=findTmp(ast,test);
-    let ezer = findAlt(ast);
-    if (ast.consequent.body === undefined) {
-        all = parser(ast.consequent);
-    }
-    else {
-        all = ast.consequent.body.reduce((acc, curr) => acc.concat(parser(curr)), []);
-    }
-    if (ezer === '') {
-        return [tmp].concat(all);
-    }
-    else {
-        return [tmp].concat(all).concat(ezer);
-    }
-};
-
-
-
-
-const whilExp= (ast,params,env)=>{
-
-    const test = sub(ast.test,env);
-    var newEnv = Object.assign({},env);
-    const bodyN = parseCode(ast.body,newEnv);
-    ast.body=bodyN;
+    ast.test = sub(ast.test,params,env);
+    var new1Env = Object.assign({},env);
+    var new2Env = Object.assign({},env);
+    ast.consequent = parseCode(ast.consequent,params,newEnv1);
+    ast.alternate = parseCode(ast.alternate,params,newEnv2);
     //TODO EVALLLLLLLLLLLLLLLLLLLLLL
     ast['testTF'] = checkTest(ast.test,ast,params,env)
     //END EVALLLLLLLL
@@ -124,14 +104,36 @@ const whilExp= (ast,params,env)=>{
 };
 
 
-const checkTest(ast.test,ast,params,env) =>{
+const whilExp= (ast,params,env)=>{
+
+    ast.test = sub(ast.test,params,env);
+    var newEnv = Object.assign({},env);
+    const bodyN = parseCode(ast.body,newEnv);
+    ast.body=bodyN;
+    //TODO EVALLLLLLLLLLLLLLLLLLLLLL
+    ast['testTF'] = checkTest(ast.test,params,env)
+    //END EVALLLLLLLL
+    return ast;
+};
+
+
+const checkTest(ast,params,env) =>{
 //TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    trurn false;
 };
 
 const returnExp= (ast,params,env)=> {
-    const test = objectLine (ast.loc.start.line,ast.type, '','', escodegen.generate(ast.argument));
-    return [test];
+    ast.argument= sub(ast,params,env);
+    return ast;
 };
+
+
+const sub(ast,params,env)=>
+{
+    //TODO
+};
+
+/*
 const forExp= (ast,params,env)=>{
 
     const test = escodegen.generate(ast.test);
@@ -140,5 +142,7 @@ const forExp= (ast,params,env)=>{
     return [tmp].concat(all);
 
 };
+*/
+
 
 export {parseCode};
