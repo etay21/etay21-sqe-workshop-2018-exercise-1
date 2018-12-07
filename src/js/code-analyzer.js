@@ -56,37 +56,38 @@ const FunctionDcl= (ast,params,env)=>
 {
     //const obj = objectLine(ast.loc.start.line, ast.type, ast.id.name, '','');
     const parms = ast.params.reduce((acc,curr)=> acc.concat(curr.name),[]);
-    parms.map((name)=> env[name]= name)
-    const body = 
-    return ast.body.body.reduce(((acc,curr)=> acc.concat(parser(curr))),[obj].concat(parms));
+    parms.map((name)=> env[name]= name);
+    const bodyN = parseCode(ast.body,params,env);
+    ast.body=bodyN;
+    return ast;
 
 };
 
+
 const varDecl= (ast,params,env)=>
 {
-    env = ast.declarations.reduce((acc,curr) => Object.assign({Var:curr.id.name ,Val: curr.init ? escodegen.generate(curr.init) : ''} , env));
-    //return ast.declarations.reduce((acc,curr) =>
-    //    acc.concat(objectLine(curr.loc.start.line, ast.type, curr.id.name,'',curr.init ? escodegen.generate(curr.init) : '')),[]);
-    return null;
+    ast.declarations.map((dec)=> {const value = dec.init;
+                                    if(value === undefined)
+                                    {
+                                        env[dec.id.name] =null;
+                                    }
+                                    else {
+                                        env[dec.id.name] =escodegen.generate(sub(env,value));
+                                    }}
+    )
+    return ast;
 
 };
 
 const assDecl= (ast,params,env)=>
 {
-
-    return  objectLine(ast.expression.loc.start.line, ast.expression.type, escodegen.generate(ast.expression.left), '',escodegen.generate(ast.expression.right));
-
-};
-
-const whilExp= (ast,params,env)=>{
-
-    const test = escodegen.generate(ast.test);
-    const tmp= objectLine (ast.loc.start.line,ast.type, '',test,'');
-    const all = ast.body.body.reduce((acc,curr) => acc.concat(parser(curr)),[]);
-    // const all = parser(ast.body.body);
-    return [tmp].concat(all);
+    env[ast.left.name] = escodegen.generate(sub(env,ast.right));
+    return ast;
+   /// return  objectLine(ast.expression.loc.start.line, ast.expression.type, escodegen.generate(ast.expression.left), '',escodegen.generate(ast.expression.right));
 
 };
+
+
 
 const ifExp= (ast,params,env)=> {
     const test = escodegen.generate(ast.test);
@@ -108,6 +109,24 @@ const ifExp= (ast,params,env)=> {
 };
 
 
+
+
+const whilExp= (ast,params,env)=>{
+
+    const test = sub(ast.test,env);
+    var newEnv = Object.assign({},env);
+    const bodyN = parseCode(ast.body,newEnv);
+    ast.body=bodyN;
+    //TODO EVALLLLLLLLLLLLLLLLLLLLLL
+    ast['testTF'] = checkTest(ast.test,ast,params,env)
+    //END EVALLLLLLLL
+    return ast;
+};
+
+
+const checkTest(ast.test,ast,params,env) =>{
+//TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+};
 
 const returnExp= (ast,params,env)=> {
     const test = objectLine (ast.loc.start.line,ast.type, '','', escodegen.generate(ast.argument));
