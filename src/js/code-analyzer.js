@@ -3,10 +3,9 @@ import * as escodegen from 'escodegen';
 
 const parseCode = (codeToParse) => {
     const func = esprima.parseScript(codeToParse,{loc: true});
+    return parser(func);
+    //console.log(x);
 
-    let x= parser(func)
-    console.log(x);
-    return x;
 };
 
 var elseif=0;
@@ -36,14 +35,14 @@ const parser= (ast)=> {
 const parser2= (ast)=> {
     let check = ast.type;
     switch (check) {
-        case 'WhileStatement':
-            return whilExp(ast);
-        case 'IfStatement':
-            return ifExp(ast);
-        case 'ReturnStatement':
-            return returnExp(ast);
-        case 'FunctionDeclaration':
-            return FunctionDcl(ast);
+    case 'WhileStatement':
+        return whilExp(ast);
+    case 'IfStatement':
+        return ifExp(ast);
+    case 'ReturnStatement':
+        return returnExp(ast);
+    case 'FunctionDeclaration':
+        return FunctionDcl(ast);
     }
 };
 
@@ -80,7 +79,7 @@ const FunctionDcl= (ast)=>
 const varDecl= (ast)=>
 {
 
-    return ast.declarations.reduce((acc,curr) => acc.concat(objectLine(curr.loc.start.line, ast.type, curr.id.name,'',curr.init ?curr.init : '')),[]);
+    return ast.declarations.reduce((acc,curr) => acc.concat(objectLine(curr.loc.start.line, ast.type, curr.id.name,'',curr.init ? escodegen.generate(curr.init) : '')),[]);
 
 };
 
@@ -102,7 +101,7 @@ const whilExp= (ast)=>{
 };
 
 const ifExp= (ast)=> {
-   // const test = escodegen.generate(ast.test);
+    // const test = escodegen.generate(ast.test);
     const test = ast.test;
     let all;
     let tmp=findTmp(ast,test);
@@ -124,10 +123,10 @@ const ifExp= (ast)=> {
 const findTmp=(ast,test)=>
 {
     if (elseif === 0) {
-        return  objectLine(ast.loc.start.line, ast.type, '', test, '');
+        return  objectLine(ast.loc.start.line, ast.type, '', escodegen.generate(test) , '');
     }
     else {
-        return objectLine(ast.loc.start.line, 'else if statement', '', test, '');
+        return objectLine(ast.loc.start.line, 'else if statement', '', escodegen.generate(test), '');
     }
 };
 
